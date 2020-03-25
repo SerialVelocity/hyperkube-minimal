@@ -7,6 +7,10 @@ COPY qemu-${QEMU_ARCH}-static /usr/bin
 ARG K8S_VERSION
 ARG K8S_ARCH
 
+# Add kube-proxy dependencies
+RUN apk add --no-cache conntrack-tools iptables ip6tables
+
+# Add and compress the kubernetes server binaries
 RUN set -euxo pipefail && \
     apk add --no-cache curl && \
     curl -sSL --fail "https://dl.k8s.io/${K8S_VERSION}/kubernetes-server-linux-${K8S_ARCH}.tar.gz" | tar xz -C / && \
