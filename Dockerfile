@@ -7,7 +7,10 @@ COPY qemu-${QEMU_ARCH}-static /usr/bin
 ARG K8S_VERSION
 ARG K8S_ARCH
 
-# Add kube-proxy dependencies
+# Add kubelet dependencies
+RUN apk add --no-cache coreutils findutils
+
+# Add kube-proxy dependencies (iptables stuff also used by kubelet)
 RUN apk add --no-cache conntrack-tools iptables ip6tables
 
 # Add and compress the kubernetes server binaries
