@@ -13,13 +13,12 @@ RUN apk add --no-cache coreutils findutils
 # Add kube-proxy dependencies (iptables stuff also used by kubelet)
 RUN apk add --no-cache conntrack-tools iptables ip6tables
 
-# Add and compress the kubernetes server binaries
+# Add the kubernetes server binaries
 RUN set -euxo pipefail && \
     apk add --no-cache curl && \
     curl -sSL --fail "https://dl.k8s.io/${K8S_VERSION}/kubernetes-server-linux-${K8S_ARCH}.tar.gz" | tar xz -C / && \
-    curl -sSL --fail "https://github.com/upx/upx/releases/download/v3.96/upx-3.96-${K8S_ARCH}_linux.tar.xz" | tar xJ --strip-components=1 -C /bin/ upx-3.96-${K8S_ARCH}_linux/upx && \
     cd /kubernetes/server/bin && \
-    find . -type f -executable -print0 | xargs -0 -n1 -I{} upx -9 -q -o /usr/local/bin/{} {} && \
+    find . -type f -executable -print0 | xargs -0 -n1 -I{} mv {} /usr/local/bin/{} && \
     cd / && \
-    rm -rf /kubernetes /bin/upx && \
+    rm -rf /kubernetes && \
     apk del --no-cache curl
